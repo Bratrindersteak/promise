@@ -1,0 +1,22 @@
+{
+  "name": "promise",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "promises-aplus-tests src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bratrindersteak/promise.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Bratrindersteak/promise/issues"
+  },
+  "homepage": "https://github.com/Bratrindersteak/promise#readme",
+  "devDependencies": {
+    "promises-aplus-tests": "^2.1.2"
+  }
+}
