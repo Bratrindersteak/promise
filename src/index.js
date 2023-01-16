@@ -261,18 +261,4 @@ class Promise {
   }
 }
 
-Promise.defer = Promise.deferred = function () {
-  let result = {};
-
-  result.promise = new Promise((resolve, reject) => {
-    result.resolve = resolve;
-    result.reject = reject;
-  });
-
-  return result;
-};
-
-console.log('Promise.resolve(): ', Promise.resolve());
-console.log('Promise.resolve(): ', new Promise((a, b) => {a(56)}));
-
 module.exports = Promise;

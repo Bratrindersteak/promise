@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "test": "promises-aplus-tests src/index.js"
+    "test": "promises-aplus-tests test/index.js"
   },
   "repository": {
     "type": "git",
