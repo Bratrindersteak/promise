@@ -5,10 +5,10 @@ import { iterableToArray, isThenableObject } from './utils.mjs';
  * 模拟 Promise 函数.
  */
 class MyPromise {
-  #static;
-  #value;
-  #reason;
-  #callbacks = [];
+  #static; // 声明状态值.
+  #value;  // 声明成功结果值.
+  #reason; // 声明异常原因值.
+  #callbacks = [];// 初始化待执行then的回调集.
 
   /**
    * .
@@ -22,7 +22,7 @@ class MyPromise {
       throw new TypeError(`Promise resolver ${executor} is not a function`);
     }
 
-    this.#static = PENDING;
+    this.#static = PENDING; // 初始化状态值.
 
     const resolve = (value) => {
       if (this.#static === PENDING) {
@@ -42,7 +42,7 @@ class MyPromise {
     };
 
     try {
-      executor(resolve, reject);
+      executor(resolve, reject); // 运行执行函数.
     } catch (error) {
       reject(error);
     }
@@ -66,9 +66,7 @@ class MyPromise {
       onFulfilled = value => value;
     }
     if (typeof onRejected !== 'function') {
-      onRejected = reason => {
-        throw reason
-      };
+      onRejected = reason => { throw reason };
     }
 
     return new this.constructor((resolve, reject) => {
@@ -105,9 +103,7 @@ class MyPromise {
     this.then(value => {
       return this.constructor.resolve(onFinally()).then(() => value);
     }, reason => {
-      return this.constructor.resolve(onFinally()).then(() => {
-        throw reason
-      });
+      return this.constructor.resolve(onFinally()).then(() => { throw reason });
     });
   }
 
@@ -119,14 +115,18 @@ class MyPromise {
       return value;
     }
 
-    return new this((resolve, reject) => resolve(value));
+    return new this((resolve, reject) => {
+      resolve(value);
+    });
   }
 
   /**
    * .
    */
   static reject(reason) {
-    return new this((resolve, reject) => reject(reason));
+    return new this((resolve, reject) => {
+      reject(reason);
+    });
   }
 
   /**
