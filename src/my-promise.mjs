@@ -1,5 +1,5 @@
 import { PENDING, FULFILLED, REJECTED } from './constants.mjs';
-import { iterableToArray, isThenableObject } from './utils.mjs';
+import { iterableToArray, isThenableObject, handler } from './utils.mjs';
 
 /**
  * 模拟 Promise 函数.
@@ -48,45 +48,27 @@ class MyPromise {
     }
   }
 
-  #handler(callback, resolve, reject) {
-    setTimeout(() => {
-      try {
-        callback()
-      } catch (error) {
-
-      }
-    });
-  }
-
   /**
    * Promise唯一的核心方法.
    */
   then(onFulfilled, onRejected) {
-    if (typeof onFulfilled !== 'function') {
-      onFulfilled = value => value;
-    }
-    if (typeof onRejected !== 'function') {
-      onRejected = reason => { throw reason };
-    }
+    if (typeof onFulfilled !== 'function') { onFulfilled = value => value }
+    if (typeof onRejected !== 'function') { onRejected = reason => { throw reason } }
 
-    return new this.constructor((resolve, reject) => {
+    const newPromise = new this.constructor((resolve, reject) => {
       if (this.#static === PENDING) {
         this.#callbacks.push({
-          onFulfilled() {
-            setTimeout(() => onFulfilled(this.#value))
-          },
-          onRejected() {
-            setTimeout(() => onRejected(this.#reason))
-          },
+          onFulfilled() { handler(newPromise, () => onFulfilled(this.#value), resolve, reject) },
+          onRejected() { handler(newPromise, () => onRejected(this.#reason), resolve, reject) },
         });
       } else if (this.#static === FULFILLED) {
-        this.#handler(() => onFulfilled(this.#value), resolve, reject);
-
-        setTimeout(() => onFulfilled(this.#value));
+        handler(newPromise, () => onFulfilled(this.#value), resolve, reject);
       } else if (this.#static === REJECTED) {
-        setTimeout(() => onRejected(this.#reason));
+        handler(newPromise, () => onRejected(this.#reason), resolve, reject);
       }
     });
+
+    return newPromise;
   }
 
   /**
